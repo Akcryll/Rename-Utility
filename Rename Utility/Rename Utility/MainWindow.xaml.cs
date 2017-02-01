@@ -45,36 +45,29 @@ namespace Rename_Utility
         {
             Dictionary<String,String> fileDictionary = new Dictionary<String, String>();
             String key;
-            new Task(delegate {
-
-                for (int i = 0; i < fileNames.Length; i++)
-                {
-                    key = BitConverter.ToString(MD5.Create().ComputeHash(File.Create(fileNames[i]))).Replace("-", "");
-                    if (!fileDictionary.ContainsKey(key))
-                        fileDictionary.Add(key, fileNames[i]);
-                }
-
-                lblDuplicateFiles.Dispatcher.Invoke( delegate {
-                    lblDuplicateFiles.Content = (fileNames.Length - fileDictionary.Count);
-                } );
-                //lblDuplicateFiles.Content = (fileNames.Length - fileDictionary.Count);
-                saveFiles(fileDictionary);
-            }).Start();
+            for (int i = 0; i < fileNames.Length; i++)
+            {
+                key = BitConverter.ToString(MD5.Create().ComputeHash(File.Create(fileNames[i]))).Replace("-", "");
+                if (!fileDictionary.ContainsKey(key))
+                    fileDictionary.Add(key, fileNames[i]);
+            }
             
-            
+            lblDuplicateFiles.Content = (fileNames.Length - fileDictionary.Count);
+
+            saveFiles(fileDictionary);            
         }
 
         public void saveFiles(Dictionary<String,String> fileDictionary)
         {
             
-            String path = @"D:\Wallpaper Collection";
+            String path = @"E:\Wallpaper Collection";
             Directory.CreateDirectory(path);
             int index = 0;
             foreach (var file in fileDictionary)
-            {                
-                
+            {
+                String extension = Path.GetExtension(file.Value);
                 FileInfo fileInfo = new FileInfo(file.Value);
-                fileInfo.CopyTo(path+@"\w"+index+Path.GetExtension(file.Value),true);                
+                fileInfo.CopyTo(path+@"\w"+index+extension);                
             }
         }
     }
